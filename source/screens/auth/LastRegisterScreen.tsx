@@ -18,7 +18,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useForm, Controller, SubmitHandler} from 'react-hook-form';
 import {REGEX_EMAIL} from '../../constants/Regex';
 import {useAppDispatch, useAppSelector} from '../../app/hook';
-import {createUser} from '../../features/counter/authSlice';
+import {createUser} from '../../features/auth/authSlice';
 import LoadingScreen from '../../components/LoadingScreen';
 
 type FormValues = {

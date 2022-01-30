@@ -1,18 +1,124 @@
 import * as React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
-import {useAppDispatch} from '../../app/hook';
-import {requestLogout} from '../../features/counter/authSlice';
+import {useAppDispatch, useAppSelector} from '../../app/hook';
+import styled from 'styled-components/native';
+import {FlatList} from 'react-native';
+import {BLACK, BLUE_GRAY_200, WHITE} from '../../constants/COLOR';
+import {
+  HEIGHT_WINDOW,
+  normalize,
+  WIDHTH_WINDOW,
+} from '../../constants/Dimensions';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../../navigator';
+import PostItem from '../../components/PostItem';
+import firestore from '@react-native-firebase/firestore';
+import {showAlert} from '../../ultities/Ultities';
+
+const DATA = [];
+
+interface HeaderProps {
+  avatarUser: string;
+  onPress: () => void;
+}
+
+type HomeScreenProps = StackNavigationProp<RootStackParamList, 'Home'>;
+
+const SearchContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  background-color: ${WHITE};
+  margin-bottom: ${HEIGHT_WINDOW / 100}px;
+  padding-vertical: ${(HEIGHT_WINDOW / 100) * 2}px;
+  padding-horizontal: ${(WIDHTH_WINDOW / 100) * 4}px;
+`;
+
+const AvatarUserImage = styled.Image`
+  width: ${(WIDHTH_WINDOW / 100) * 8}px;
+  height: ${(WIDHTH_WINDOW / 100) * 8}px;
+  border-radius: ${(WIDHTH_WINDOW / 100) * 5}px;
+  resize-mode: cover;
+`;
+
+const CreatePostButton = styled.TouchableOpacity`
+  flex: 1;
+  margin-horizontal: ${(WIDHTH_WINDOW / 100) * 2}px;
+  border-radius: ${(WIDHTH_WINDOW / 100) * 5}px;
+  padding-vertical: ${HEIGHT_WINDOW / 100 / 1.25}px;
+  border-width: 1px;
+  border-color: ${BLUE_GRAY_200};
+  padding-horizontal: ${(WIDHTH_WINDOW / 100) * 4}px;
+`;
+
+const CreatePostText = styled.Text`
+  font-size: ${normalize(12)}px;
+  font-weight: 400;
+  color: ${BLACK};
+`;
+
+const HeaderFlatList = (props: HeaderProps) => {
+  return (
+    <SearchContainer>
+      <AvatarUserImage source={{uri: props.avatarUser}} />
+      <CreatePostButton onPress={props.onPress}>
+        <CreatePostText>Bạn đang nghĩ gì?</CreatePostText>
+      </CreatePostButton>
+    </SearchContainer>
+  );
+};
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
+  const avatarUser = useAppSelector(state => state.auth.photoURL);
+  const [listPost, setListPost] = React.useState([]);
+  const navigation = useNavigation<HomeScreenProps>();
+
+  const onClickCreatePostButton = () => {
+    navigation.navigate('CreatePost');
+  };
+
+  const renderItem = ({item}) => {
+    return <PostItem item={item} />;
+  };
+
+  const getData = () => {
+    try {
+      firestore()
+        .collection('Posts')
+        .onSnapshot(
+          querySnapshot => {
+            let dataPost = [];
+            querySnapshot.forEach(documentSnapshot => {
+              dataPost.push(documentSnapshot.data());
+            });
+            dataPost.sort((a, b) => a.timeCreate - b.timeCreate);
+            setListPost(dataPost);
+          },
+          error => {
+            showAlert(error.message, 'danger');
+          },
+        );
+    } catch (error) {
+      showAlert(error.message, 'danger');
+    }
+  };
+
+  React.useEffect(() => {
+    getData();
+  }, []);
+
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <TouchableOpacity
-        onPress={() => {
-          dispatch(requestLogout());
-        }}>
-        <Text>Logout</Text>
-      </TouchableOpacity>
-    </View>
+    <FlatList
+      data={listPost}
+      keyExtractor={(_, index) => index.toString()}
+      renderItem={renderItem}
+      contentContainerStyle={{flexGrow: 1, backgroundColor: BLUE_GRAY_200}}
+      ListHeaderComponent={() => (
+        <HeaderFlatList
+          onPress={onClickCreatePostButton}
+          avatarUser={avatarUser}
+        />
+      )}
+    />
   );
 }

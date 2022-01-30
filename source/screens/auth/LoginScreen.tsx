@@ -20,9 +20,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {REGEX_EMAIL} from '../../constants/Regex';
 import LoadingScreen from '../../components/LoadingScreen';
 import {useAppDispatch, useAppSelector} from '../../app/hook';
-import {Text, View} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {requestLogin} from '../../features/counter/authSlice';
+import {requestLogin} from '../../features/auth/authSlice';
 
 type LoginScreenProps = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -63,6 +61,7 @@ const InputTextItem = styled.TextInput`
   border-bottom-width: 1px;
   border-bottom-color: ${BLUE_GRAY};
   margin-vertical: ${(HEIGHT_WINDOW / 100) * 2}px;
+  height: ${(HEIGHT_WINDOW / 100) * 5}px;
 `;
 
 const ErrorContainer = styled.View`
@@ -125,6 +124,7 @@ export default function LoginScreen() {
       requestLogin({userEmail: data.email, userPassword: data.password}),
     );
   };
+
   return (
     <Container>
       <TopContainer>
@@ -199,7 +199,7 @@ export default function LoginScreen() {
                   autoCapitalize="none"
                   secureTextEntry={true}
                 />
-                {errors.email && (
+                {errors.password && (
                   <ErrorContainer>
                     <FontAwesome5
                       color={RED_A400}

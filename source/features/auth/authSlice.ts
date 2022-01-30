@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../app/store';
 import auth from '@react-native-firebase/auth';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';

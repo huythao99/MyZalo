@@ -7,6 +7,8 @@ import SplashScreen from '../screens/splash/SplashScreen';
 import OnBoardingScreen from '../screens/splash/OnBoardingScreen';
 import {useAppSelector} from '../app/hook';
 import LastRegisterScreen from '../screens/auth/LastRegisterScreen';
+import BottomTab from './BottomTab';
+import CreatePostScreen from '../screens/post/CreatePostScreen';
 
 export type RootStackParamList = {
   RegisterScreen: undefined;
@@ -18,6 +20,8 @@ export type RootStackParamList = {
     name: string;
   };
   Home: undefined;
+  BottomTab: undefined;
+  CreatePost: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,7 +48,16 @@ export default function Navigator() {
           <Stack.Screen name="LastRegister" component={LastRegisterScreen} />
         </Stack.Group>
       ) : (
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Group screenOptions={{headerShown: false}}>
+          <Stack.Screen
+            name="BottomTab"
+            component={BottomTab}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen name={'CreatePost'} component={CreatePostScreen} />
+        </Stack.Group>
       )}
     </Stack.Navigator>
   );

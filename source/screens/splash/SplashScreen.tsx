@@ -1,10 +1,7 @@
 import * as React from 'react';
 import {View, Text} from 'react-native';
 import {useAppDispatch} from '../../app/hook';
-import {
-  loadingSplash,
-  requestAutoLogin,
-} from '../../features/counter/authSlice';
+import {loadingSplash, requestAutoLogin} from '../../features/auth/authSlice';
 
 export default function SplashScreen() {
   const dispatch = useAppDispatch();
