@@ -7,11 +7,14 @@ import {
   BLUE_GRAY,
   BLUE_GRAY_200,
   GREY_700,
+  LIGHT_BLUE_A700,
   WHITE,
 } from '../constants/COLOR';
-import {timeAgo} from '../ultities/Ultities';
+import {getUIDOfPost, timeAgo} from '../ultities/Ultities';
 import {TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useAppDispatch} from '../app/hook';
+import {requestLikePost} from '../features/post/postSlice';
 
 interface PostItemProps {
   item: {
@@ -21,15 +24,21 @@ interface PostItemProps {
     posterName: string;
     content: string;
     uriImage: string | null;
-    numOfLike: number;
     numOfShare: number;
     numOfComment: number;
     listUserLike: Array<string>;
+    id: string;
   };
+  uid: string;
+  onClickUserOfPost: (uid: string) => void;
 }
 
 type AlignSelfProps = {
   position: 'flex-start' | 'flex-end';
+};
+
+type ReactionButton = {
+  isLiked: Boolean;
 };
 
 const Container = styled.View`
@@ -46,7 +55,7 @@ const HeaderContainer = styled.View`
   align-items: flex-start;
 `;
 
-const UserContainer = styled.View`
+const UserContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: flex-start;
 `;
@@ -128,15 +137,40 @@ const ReactionButton = styled.TouchableOpacity`
 
 const ReactionText = styled.Text`
   font-size: ${normalize(12)}px;
-  color: ${GREY_700};
+  color: ${(props: ReactionButton) =>
+    props.isLiked ? LIGHT_BLUE_A700 : GREY_700};
   margin-left: ${(WIDHTH_WINDOW / 100) * 2}px;
 `;
 
 function PostItem(props: PostItemProps) {
+  const dispatch = useAppDispatch();
+  const [timer, setTimer] = React.useState(null);
+  const [isLiked, setIsLiked] = React.useState(false);
+
+  const onLike = () => {
+    setIsLiked(!isLiked);
+    let newTimer = timer;
+    if (newTimer) {
+      clearTimeout(newTimer);
+    }
+
+    newTimer = setTimeout(() => {
+      dispatch(requestLikePost({userID: props.uid, postID: props.item.id}));
+    }, 1500);
+    setTimer(newTimer);
+  };
+
+  React.useEffect(() => {
+    setIsLiked(
+      props.item.listUserLike.findIndex(item => item === props.uid) !== -1,
+    );
+  }, []);
+
   return (
     <Container>
       <HeaderContainer>
-        <UserContainer>
+        <UserContainer
+          onPress={() => props.onClickUserOfPost(props.item.posterId)}>
           <UserAvatarImage source={{uri: props.item.posterAvatar}} />
           <View>
             <UserNameText>{props.item.posterName}</UserNameText>
@@ -161,7 +195,7 @@ function PostItem(props: PostItemProps) {
         </ContentImageButton>
       )}
       <InfoReactionContainer>
-        {props.item.numOfLike > 0 && (
+        {props.item.listUserLike.length > 0 && (
           <InfoReactionWrap position={'flex-start'}>
             <FontAwesome5
               size={(WIDHTH_WINDOW / 100) * 4.5}
@@ -169,31 +203,31 @@ function PostItem(props: PostItemProps) {
               name={'thumbs-up'}
             />
             <InfoReactionText>
-              {props.item.numOfLike} lượt thích
+              {props.item.listUserLike.length} lượt thích
             </InfoReactionText>
           </InfoReactionWrap>
         )}
         {props.item.numOfComment > 0 && (
           <InfoReactionWrap position={'flex-end'}>
             <InfoReactionText>
-              {props.item.numOfLike} bình luận
+              {props.item.numOfComment} bình luận
             </InfoReactionText>
           </InfoReactionWrap>
         )}
         {props.item.numOfShare > 0 && (
           <InfoReactionWrap position={'flex-end'}>
-            <InfoReactionText>{props.item.numOfLike} chia sẻ</InfoReactionText>
+            <InfoReactionText>{props.item.numOfShare} chia sẻ</InfoReactionText>
           </InfoReactionWrap>
         )}
       </InfoReactionContainer>
       <ReactionButtonContainer>
-        <ReactionButton>
+        <ReactionButton onPress={onLike}>
           <FontAwesome5
             size={(WIDHTH_WINDOW / 100) * 4.5}
-            color={GREY_700}
+            color={isLiked ? LIGHT_BLUE_A700 : GREY_700}
             name={'thumbs-up'}
           />
-          <ReactionText>Thích</ReactionText>
+          <ReactionText isLiked={isLiked}>Thích</ReactionText>
         </ReactionButton>
         <ReactionButton>
           <FontAwesome5

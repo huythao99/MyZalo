@@ -244,6 +244,7 @@ export default function CreatePostScreen() {
           userAvatar: userAvatar,
           uriImage: image ? image.uri : null,
           content: data.content,
+          uriVideo: null,
         }),
       ).unwrap();
       if (response?.status) {

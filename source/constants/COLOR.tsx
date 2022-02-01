@@ -13,3 +13,5 @@ export const RED_500 = '#F44336';
 export const YELLOW_700 = '#FBC02D';
 export const BLUE_A400 = '#2979FF';
 export const GREY_700 = '#616161';
+export const BLUE_GREY_50 = '#ECEFF1';
+export const GREY_600 = '#757575';

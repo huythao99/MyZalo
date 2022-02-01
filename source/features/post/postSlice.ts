@@ -30,30 +30,35 @@ export const requestCreatePost = createAsyncThunk(
     content,
     uriImage,
     userAvatar,
+    uriVideo,
   }: {
     userName: string;
     uid: string;
     content: string;
     uriImage: string | null;
     userAvatar: string;
+    uriVideo: string | null;
   }): Promise<Partial<Post>> => {
     try {
       const timeNow = Date.now();
-
-      const reference = storage().ref(`post/${uid}_${timeNow}_${uriImage}`);
-      await reference.putFile(uriImage);
-      const urlImage = await reference.getDownloadURL();
+      let urlImage = null;
+      if (uriImage) {
+        const reference = storage().ref(`post/${uid}_${timeNow}_${uriImage}`);
+        await reference.putFile(uriImage);
+        urlImage = await reference.getDownloadURL();
+      }
       const post = {
         timeCreate: timeNow,
-        posterId: `${uid}_${timeNow}`,
+        id: `${uid}_${timeNow}`,
+        posterId: `${uid}`,
         posterAvatar: userAvatar,
         posterName: userName,
         content: content,
         uriImage: urlImage,
-        numOfLike: 0,
         numOfShare: 0,
         numOfComment: 0,
         listUserLike: [],
+        uriVideo: uriVideo,
       };
       await firestore().collection('Posts').add(post);
       showAlert('Đăng bài thành công', 'success');
@@ -70,6 +75,48 @@ export const requestCreatePost = createAsyncThunk(
         });
       });
     }
+  },
+);
+
+export const requestLikePost = createAsyncThunk(
+  'post/requestLikePost',
+  async ({postID, userID}: {postID: string; userID: string}) => {
+    firestore()
+      .collection('Posts')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(async documentSnapshot => {
+          if (documentSnapshot.data().id === postID) {
+            let newListUserLike = [];
+            const index = documentSnapshot
+              .data()
+              .listUserLike.findIndex((item: string) => item === userID);
+            if (index === -1) {
+              newListUserLike = [
+                ...documentSnapshot.data().listUserLike,
+                userID,
+              ];
+            } else {
+              newListUserLike = documentSnapshot
+                .data()
+                .listUserLike.filter((item: string) => item !== userID);
+            }
+            firestore()
+              .collection('Posts')
+              .doc(documentSnapshot.id)
+              .update({
+                listUserLike: newListUserLike,
+              })
+              .then(() => {})
+              .catch(error => {
+                showAlert(error.message, 'danger');
+              });
+          }
+        });
+      })
+      .catch(error => {
+        showAlert(error.message, 'danger');
+      });
   },
 );
 

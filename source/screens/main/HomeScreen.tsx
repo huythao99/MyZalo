@@ -15,8 +15,6 @@ import PostItem from '../../components/PostItem';
 import firestore from '@react-native-firebase/firestore';
 import {showAlert} from '../../ultities/Ultities';
 
-const DATA = [];
-
 interface HeaderProps {
   avatarUser: string;
   onPress: () => void;
@@ -68,8 +66,8 @@ const HeaderFlatList = (props: HeaderProps) => {
 };
 
 export default function HomeScreen() {
-  const dispatch = useAppDispatch();
   const avatarUser = useAppSelector(state => state.auth.photoURL);
+  const userID = useAppSelector(state => state.auth.uid);
   const [listPost, setListPost] = React.useState([]);
   const navigation = useNavigation<HomeScreenProps>();
 
@@ -77,34 +75,39 @@ export default function HomeScreen() {
     navigation.navigate('CreatePost');
   };
 
-  const renderItem = ({item}) => {
-    return <PostItem item={item} />;
+  const onClickUserOfPost = (uid: string) => {
+    navigation.navigate('Profile', {
+      uid: uid,
+    });
   };
 
-  const getData = () => {
-    try {
-      firestore()
-        .collection('Posts')
-        .onSnapshot(
-          querySnapshot => {
-            let dataPost = [];
-            querySnapshot.forEach(documentSnapshot => {
-              dataPost.push(documentSnapshot.data());
-            });
-            dataPost.sort((a, b) => a.timeCreate - b.timeCreate);
-            setListPost(dataPost);
-          },
-          error => {
-            showAlert(error.message, 'danger');
-          },
-        );
-    } catch (error) {
-      showAlert(error.message, 'danger');
-    }
+  const renderItem = ({item}) => {
+    return (
+      <PostItem
+        item={item}
+        onClickUserOfPost={onClickUserOfPost}
+        uid={userID}
+      />
+    );
   };
 
   React.useEffect(() => {
-    getData();
+    const unsubcribe = firestore()
+      .collection('Posts')
+      .onSnapshot(
+        querySnapshot => {
+          let dataPost = [];
+          querySnapshot.forEach(documentSnapshot => {
+            dataPost.push(documentSnapshot.data());
+          });
+          dataPost.sort((a, b) => a.timeCreate - b.timeCreate);
+          setListPost(dataPost);
+        },
+        error => {
+          showAlert(error.message, 'danger');
+        },
+      );
+    return () => unsubcribe();
   }, []);
 
   return (

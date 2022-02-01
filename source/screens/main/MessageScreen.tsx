@@ -11,13 +11,18 @@ import {
 } from '../../constants/Dimensions';
 import {Controller, SubmitHandler, useForm} from 'react-hook-form';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {requestListConversation} from '../../features/main/messageSlice';
 import ConversationItem from '../../components/ConversationItem';
 import {Conversation} from '../../constants/Types';
+import firestore from '@react-native-firebase/firestore';
+import {RootStackParamList} from '../../navigator';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 
 type FormValues = {
   search: string;
 };
+
+type MessageScreenProps = StackNavigationProp<RootStackParamList, 'Message'>;
 
 const Container = styled.View`
   flex: 1;
@@ -61,22 +66,50 @@ const TitleText = styled.Text`
 
 export default function MessageScreen() {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<MessageScreenProps>();
   const userId = useAppSelector(state => state.auth.uid);
-  const listConversation = useAppSelector(state => state.message.conversation);
+  const [listConversation, setListConversation] = React.useState([]);
   const {control, handleSubmit} = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = data => {};
 
-  const renderItem = ({item}: {item: Conversation}) => {
-    return <ConversationItem item={item} />;
+  const onClickItem = (
+    friendID: string,
+    friendAvatar: string,
+    friendName: string,
+  ) => {
+    navigation.navigate('Chat', {
+      friendID,
+      friendAvatar,
+      friendName,
+    });
   };
 
-  const getData = () => {
-    dispatch(requestListConversation({uid: userId}));
+  const renderItem = ({item}: {item: Conversation}) => {
+    return (
+      <ConversationItem uid={userId} item={item} onClickItem={onClickItem} />
+    );
   };
 
   React.useEffect(() => {
-    getData();
+    const unsubcribe = firestore()
+      .collection('Conversation')
+      .onSnapshot(QuerySnapshot => {
+        let listConversationData = [];
+        QuerySnapshot.forEach(documentSnapshot => {
+          if (
+            documentSnapshot.data().sender.id === userId ||
+            documentSnapshot.data().receiver.id === userId
+          ) {
+            listConversationData.push(documentSnapshot.data());
+          }
+        });
+        const lastListConversation = listConversationData.sort(
+          (a, b) => b.time - a.time,
+        );
+        setListConversation(lastListConversation);
+      });
+    return () => unsubcribe();
   }, []);
 
   return (

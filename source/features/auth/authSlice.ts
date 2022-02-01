@@ -5,6 +5,7 @@ import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {showAlert} from '../../ultities/Ultities';
 import firestore from '@react-native-firebase/firestore';
 import {User} from '../../constants/Types';
+import storage from '@react-native-firebase/storage';
 
 // Define a type for the slice state
 interface AuthState {
@@ -16,6 +17,7 @@ interface AuthState {
   password: string;
   photoURL: string;
   isLoading: Boolean;
+  coverImage: string;
 }
 
 // Define the initial state using that type
@@ -28,6 +30,7 @@ const initialState: AuthState = {
   password: '',
   photoURL: '',
   isLoading: false,
+  coverImage: '',
 };
 
 export const createUser = createAsyncThunk(
@@ -42,6 +45,8 @@ export const createUser = createAsyncThunk(
     password: string;
   }): Promise<Partial<User>> => {
     try {
+      const reference = storage().ref(`default_cover_photo.jpg`);
+      const coverImage = await reference.getDownloadURL();
       const response = await auth().createUserWithEmailAndPassword(
         email,
         password,
@@ -54,6 +59,7 @@ export const createUser = createAsyncThunk(
 
       await auth().currentUser.updateProfile(update);
       const userInfo = response.user;
+
       const result = {
         status: true,
         uid: userInfo.uid,
@@ -61,6 +67,7 @@ export const createUser = createAsyncThunk(
         userPassword: password,
         username: username,
         photoURL: update.photoURL,
+        coverImage: coverImage,
       };
       await firestore().collection('Users').doc(result.uid).set(result);
       await AsyncStorageLib.setItem('user', JSON.stringify(result));
@@ -96,6 +103,10 @@ export const requestLogin = createAsyncThunk(
         userPassword,
       );
       const userInfo = response.user;
+      const userData = await firestore()
+        .collection('Users')
+        .doc(userInfo.uid)
+        .get();
       const result = {
         status: true,
         uid: userInfo.uid,
@@ -103,6 +114,7 @@ export const requestLogin = createAsyncThunk(
         userPassword: userPassword,
         username: userInfo.displayName,
         photoURL: userInfo.photoURL,
+        coverImage: userData.data().coverImage,
       };
       await AsyncStorageLib.setItem('user', JSON.stringify(result));
       showAlert('Chào mừng bạn đến với MyZalo', 'success');
@@ -194,6 +206,7 @@ export const authSlice = createSlice({
         state.photoURL = action.payload.photoURL;
         state.password = action.payload.userPassword;
         state.existUser = true;
+        state.coverImage = action.payload.coverImage;
       }
       state.isLoading = false;
     });
@@ -212,6 +225,7 @@ export const authSlice = createSlice({
         state.username = action.payload.username;
         state.photoURL = action.payload.photoURL;
         state.password = action.payload.userPassword;
+        state.coverImage = action.payload.coverImage;
       }
     });
     builder.addCase(requestLogin.rejected, state => {
@@ -230,6 +244,7 @@ export const authSlice = createSlice({
         state.username = action.payload.username;
         state.photoURL = action.payload.photoURL;
         state.password = action.payload.userPassword;
+        state.coverImage = action.payload.coverImage;
       }
     });
     builder.addCase(requestAutoLogin.rejected, state => {
@@ -249,6 +264,7 @@ export const authSlice = createSlice({
         state.email = '';
         state.uid = '';
         state.username = '';
+        state.coverImage = '';
       }
     });
     builder.addCase(requestLogout.rejected, state => {

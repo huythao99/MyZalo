@@ -9,6 +9,8 @@ import {useAppSelector} from '../app/hook';
 import LastRegisterScreen from '../screens/auth/LastRegisterScreen';
 import BottomTab from './BottomTab';
 import CreatePostScreen from '../screens/post/CreatePostScreen';
+import ProfileScreen from '../screens/personal/ProfileScreen';
+import ChatScreen from '../screens/chat/ChatScreen';
 
 export type RootStackParamList = {
   RegisterScreen: undefined;
@@ -20,8 +22,18 @@ export type RootStackParamList = {
     name: string;
   };
   Home: undefined;
+  Message: undefined;
   BottomTab: undefined;
   CreatePost: undefined;
+  Personal: undefined;
+  Profile: {
+    uid: string;
+  };
+  Chat: {
+    friendID: string;
+    friendAvatar: string;
+    friendName: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,6 +69,8 @@ export default function Navigator() {
             }}
           />
           <Stack.Screen name={'CreatePost'} component={CreatePostScreen} />
+          <Stack.Screen name={'Profile'} component={ProfileScreen} />
+          <Stack.Screen name={'Chat'} component={ChatScreen} />
         </Stack.Group>
       )}
     </Stack.Navigator>

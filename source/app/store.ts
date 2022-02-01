@@ -2,6 +2,7 @@ import {configureStore} from '@reduxjs/toolkit';
 import authSlice from '../features/auth/authSlice';
 import messageSlice from '../features/main/messageSlice';
 import postSlice from '../features/post/postSlice';
+import profileSlice from '../features/profile/profileSlice';
 // ...
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     auth: authSlice,
     message: messageSlice,
     post: postSlice,
+    profile: profileSlice,
   },
 });
 
