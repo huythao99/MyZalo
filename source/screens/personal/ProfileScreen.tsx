@@ -153,7 +153,7 @@ export default function ProfileScreen(props: ProfileProps) {
   };
 
   const renderItem = ({item}) => {
-    return <PostItem item={item} onClickUserOfPost={() => {}} />;
+    return <PostItem uid={userID} item={item} onClickUserOfPost={() => {}} />;
   };
 
   React.useEffect(() => {

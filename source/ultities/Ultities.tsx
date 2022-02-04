@@ -1,4 +1,6 @@
+import {Platform} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
+import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 
 export const showAlert = (
   description: string,
@@ -37,4 +39,44 @@ export const timeAgo = (time: number) => {
 
 export const getUIDOfPost = (posterId: string, timeNow: number) => {
   return posterId.replace(`_${timeNow}`, '');
+};
+
+export const checkPermision = async (type: string) => {
+  const platform = Platform.OS.toUpperCase();
+  const response = await check(PERMISSIONS[platform][type]);
+  let result = false;
+  switch (response) {
+    case RESULTS.UNAVAILABLE:
+      showAlert('Thiết bị không hỗ trợ', 'warning');
+      break;
+    case RESULTS.DENIED:
+      showAlert(
+        'Quyền truy cập danh bạ đã bị từ chối, hãy vào cài đặt để cấp cho ứng dụng quyền truy cập danh bạ',
+        'warning',
+      );
+      break;
+    case RESULTS.LIMITED:
+      showAlert(
+        'The permission is limited: some actions are possible',
+        'warning',
+      );
+      break;
+    case RESULTS.GRANTED:
+      result = true;
+      break;
+    case RESULTS.BLOCKED:
+      showAlert(
+        'The permission is denied and not requestable anymore',
+        'warning',
+      );
+      break;
+  }
+  return result;
+};
+
+export const TypePermission = {
+  contact: {
+    ios: 'Contacts',
+    android: 'READ_CONTACTS',
+  },
 };

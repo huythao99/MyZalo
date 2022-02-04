@@ -11,6 +11,7 @@ import BottomTab from './BottomTab';
 import CreatePostScreen from '../screens/post/CreatePostScreen';
 import ProfileScreen from '../screens/personal/ProfileScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
+import ShowImagePostScreen from '../screens/post/ShowImagePostScreen';
 
 export type RootStackParamList = {
   RegisterScreen: undefined;
@@ -33,6 +34,11 @@ export type RootStackParamList = {
     friendID: string;
     friendAvatar: string;
     friendName: string;
+  };
+  ShowImage: {
+    uriImage: string;
+    width: number;
+    height: number;
   };
 };
 
@@ -71,6 +77,13 @@ export default function Navigator() {
           <Stack.Screen name={'CreatePost'} component={CreatePostScreen} />
           <Stack.Screen name={'Profile'} component={ProfileScreen} />
           <Stack.Screen name={'Chat'} component={ChatScreen} />
+          <Stack.Screen
+            name={'ShowImage'}
+            component={ShowImagePostScreen}
+            options={{
+              presentation: 'transparentModal',
+            }}
+          />
         </Stack.Group>
       )}
     </Stack.Navigator>

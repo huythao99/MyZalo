@@ -100,7 +100,7 @@ export default function HomeScreen() {
           querySnapshot.forEach(documentSnapshot => {
             dataPost.push(documentSnapshot.data());
           });
-          dataPost.sort((a, b) => a.timeCreate - b.timeCreate);
+          dataPost.sort((a, b) => b.timeCreate - a.timeCreate);
           setListPost(dataPost);
         },
         error => {

@@ -10,11 +10,14 @@ import {
   LIGHT_BLUE_A700,
   WHITE,
 } from '../constants/COLOR';
-import {getUIDOfPost, timeAgo} from '../ultities/Ultities';
-import {TouchableOpacity, View} from 'react-native';
+import {showAlert, timeAgo} from '../ultities/Ultities';
+import {Image, TouchableOpacity, View} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {useAppDispatch} from '../app/hook';
 import {requestLikePost} from '../features/post/postSlice';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../navigator';
+import {StackNavigationProp} from '@react-navigation/stack';
 
 interface PostItemProps {
   item: {
@@ -32,6 +35,8 @@ interface PostItemProps {
   uid: string;
   onClickUserOfPost: (uid: string) => void;
 }
+
+type HomeScreenProps = StackNavigationProp<RootStackParamList, 'Home'>;
 
 type AlignSelfProps = {
   position: 'flex-start' | 'flex-end';
@@ -144,6 +149,7 @@ const ReactionText = styled.Text`
 
 function PostItem(props: PostItemProps) {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation<HomeScreenProps>();
   const [timer, setTimer] = React.useState(null);
   const [isLiked, setIsLiked] = React.useState(false);
 
@@ -158,6 +164,22 @@ function PostItem(props: PostItemProps) {
       dispatch(requestLikePost({userID: props.uid, postID: props.item.id}));
     }, 1500);
     setTimer(newTimer);
+  };
+
+  const onShowImage = () => {
+    Image.getSize(
+      props.item.uriImage,
+      (width, height) => {
+        navigation.navigate('ShowImage', {
+          uriImage: props.item.uriImage,
+          width,
+          height,
+        });
+      },
+      error => {
+        showAlert(error.message, 'danger');
+      },
+    );
   };
 
   React.useEffect(() => {
@@ -190,7 +212,7 @@ function PostItem(props: PostItemProps) {
         <ContentText>{props.item.content}</ContentText>
       </ContentTextButton>
       {props.item.uriImage && (
-        <ContentImageButton>
+        <ContentImageButton onPress={onShowImage}>
           <ContentImage source={{uri: props.item.uriImage}} />
         </ContentImageButton>
       )}
