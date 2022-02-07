@@ -223,6 +223,7 @@ function PostItem(props: PostItemProps) {
               size={(WIDHTH_WINDOW / 100) * 4.5}
               color={BLUE_A200}
               name={'thumbs-up'}
+              solid={true}
             />
             <InfoReactionText>
               {props.item.listUserLike.length} lượt thích
@@ -248,6 +249,7 @@ function PostItem(props: PostItemProps) {
             size={(WIDHTH_WINDOW / 100) * 4.5}
             color={isLiked ? LIGHT_BLUE_A700 : GREY_700}
             name={'thumbs-up'}
+            solid={isLiked}
           />
           <ReactionText isLiked={isLiked}>Thích</ReactionText>
         </ReactionButton>

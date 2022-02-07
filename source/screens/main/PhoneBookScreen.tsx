@@ -7,6 +7,7 @@ import {normalize} from '../../constants/Dimensions';
 import Contacts from 'react-native-contacts';
 import {
   checkPermision,
+  requestPermission,
   showAlert,
   TypePermission,
 } from '../../ultities/Ultities';
@@ -49,6 +50,21 @@ export default function PhoneBookScreen() {
         });
         const lastData = newData.sort((a, b) => a.name.localeCompare(b.name));
         setData(lastData);
+      } else {
+        const res = await requestPermission(
+          TypePermission.contact[Platform.OS],
+        );
+        if (res) {
+          const response = await Contacts.getAll();
+          const newData = response.map(item => {
+            return {
+              name: item.displayName,
+              phoneNumber: item.phoneNumbers[0].number,
+            };
+          });
+          const lastData = newData.sort((a, b) => a.name.localeCompare(b.name));
+          setData(lastData);
+        }
       }
     } catch (error) {
       showAlert(error.message, 'danger');

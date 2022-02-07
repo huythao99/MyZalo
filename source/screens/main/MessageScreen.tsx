@@ -65,7 +65,6 @@ const TitleText = styled.Text`
 `;
 
 export default function MessageScreen() {
-  const dispatch = useAppDispatch();
   const navigation = useNavigation<MessageScreenProps>();
   const userId = useAppSelector(state => state.auth.uid);
   const [listConversation, setListConversation] = React.useState([]);

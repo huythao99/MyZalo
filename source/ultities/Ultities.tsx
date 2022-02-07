@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 import {showMessage} from 'react-native-flash-message';
-import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 
 export const showAlert = (
   description: string,
@@ -47,6 +47,33 @@ export const checkPermision = async (type: string) => {
   let result = false;
   switch (response) {
     case RESULTS.UNAVAILABLE:
+      break;
+    case RESULTS.DENIED:
+      break;
+    case RESULTS.LIMITED:
+      break;
+    case RESULTS.GRANTED:
+      result = true;
+      break;
+    case RESULTS.BLOCKED:
+      break;
+  }
+  return result;
+};
+
+export const TypePermission = {
+  contact: {
+    ios: 'Contacts',
+    android: 'READ_CONTACTS',
+  },
+};
+
+export const requestPermission = async (type: string) => {
+  const platform = Platform.OS.toUpperCase();
+  const response = await request(PERMISSIONS[platform][type]);
+  let result = false;
+  switch (response) {
+    case RESULTS.UNAVAILABLE:
       showAlert('Thiết bị không hỗ trợ', 'warning');
       break;
     case RESULTS.DENIED:
@@ -72,11 +99,4 @@ export const checkPermision = async (type: string) => {
       break;
   }
   return result;
-};
-
-export const TypePermission = {
-  contact: {
-    ios: 'Contacts',
-    android: 'READ_CONTACTS',
-  },
 };

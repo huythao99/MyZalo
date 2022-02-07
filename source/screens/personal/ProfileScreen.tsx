@@ -30,6 +30,7 @@ interface HeaderProps {
   coverImage: string;
   userName: string;
   onPress: () => void;
+  onShowAvatar: () => void;
 }
 
 type ProfileScreenProps = StackNavigationProp<RootStackParamList, 'Profile'>;
@@ -90,7 +91,7 @@ const HeaderFlatList = (props: HeaderProps) => {
         />
       )}
       {props.avatarUser !== '' && (
-        <AvatarImageContainer>
+        <AvatarImageContainer onPress={props.onShowAvatar}>
           <AvatarImage source={{uri: props.avatarUser}} />
           <UserNameText>{props.userName}</UserNameText>
         </AvatarImageContainer>
@@ -136,6 +137,22 @@ export default function ProfileScreen(props: ProfileProps) {
 
   const onChangeAvatar = () => {};
 
+  const onShowAvatar = () => {
+    Image.getSize(
+      userAvatar,
+      (width, height) => {
+        navigation.navigate('ShowImage', {
+          uriImage: userAvatar,
+          width,
+          height,
+        });
+      },
+      error => {
+        showAlert(error.message, 'danger');
+      },
+    );
+  };
+
   const onClickSendMessage = () => {
     if (userID === props.route.params.uid) {
       showAlert('Chắc năng chat với chính mình đang phát triển', 'info');
@@ -143,7 +160,7 @@ export default function ProfileScreen(props: ProfileProps) {
       navigation.navigate('Chat', {
         friendAvatar: userAvatar,
         friendName: userName,
-        friendID: userID,
+        friendID: props.route.params.uid,
       });
     }
   };
@@ -174,6 +191,7 @@ export default function ProfileScreen(props: ProfileProps) {
             coverImage={coverImage}
             avatarUser={userAvatar}
             onPress={onChangeAvatar}
+            onShowAvatar={onShowAvatar}
           />
         )}
       />

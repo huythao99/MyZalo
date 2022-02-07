@@ -2,7 +2,13 @@ import * as React from 'react';
 import {MessageItem} from '../constants/Types';
 import styled from 'styled-components/native';
 import {HEIGHT_WINDOW, normalize, WIDHTH_WINDOW} from '../constants/Dimensions';
-import {BLACK, BLUE_GRAY_200, LIGHT_BLUE, WHITE} from '../constants/COLOR';
+import {
+  BLACK,
+  BLUE_GRAY,
+  BLUE_GRAY_200,
+  LIGHT_BLUE,
+  WHITE,
+} from '../constants/COLOR';
 
 interface MessageItemProps {
   item: MessageItem;
@@ -31,7 +37,7 @@ const UserImage = styled.Image`
 
 const MessageFriendContainer = styled.View`
   max-width: ${(WIDHTH_WINDOW / 100) * 70}px;
-  background-color: ${BLUE_GRAY_200};
+  background-color: ${BLUE_GRAY};
   padding-horizontal: ${(WIDHTH_WINDOW / 100) * 2}px;
   margin-horizontal: ${WIDHTH_WINDOW / 100}px;
   border-radius: ${(WIDHTH_WINDOW / 100) * 3}px;

@@ -300,8 +300,8 @@ export default function ChatScreen(props: ChatProps) {
         keyExtractor={(_, index) => index.toString()}
         inverted={true}
       />
-      <BottomContainer onPress={onOpenCamera}>
-        <ToolButton>
+      <BottomContainer>
+        <ToolButton onPress={onOpenCamera}>
           <FontAwesome5
             name={'camera'}
             color={LIGHT_BLUE}

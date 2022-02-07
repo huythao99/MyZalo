@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
-import {TRANSPARENT} from '../../constants/COLOR';
+import {BLACK} from '../../constants/COLOR';
 import {HEIGHT_WINDOW, WIDHTH_WINDOW} from '../../constants/Dimensions';
 
 interface ShowImageProps {
@@ -19,9 +19,9 @@ type ImageProps = {
 };
 
 const Container = styled.View`
-  width: ${WIDHTH_WINDOW};
-  height: ${HEIGHT_WINDOW};
-  background-color: ${TRANSPARENT};
+  width: ${WIDHTH_WINDOW}px;
+  height: ${HEIGHT_WINDOW}px;
+  background-color: ${BLACK};
   justify-content: center;
 `;
 
