@@ -12,6 +12,8 @@ import CreatePostScreen from '../screens/post/CreatePostScreen';
 import ProfileScreen from '../screens/personal/ProfileScreen';
 import ChatScreen from '../screens/chat/ChatScreen';
 import ShowImagePostScreen from '../screens/post/ShowImagePostScreen';
+import CallingScreen from '../screens/chat/call/CallingScreen';
+import IncomingCallScreen from '../screens/chat/call/IncomingCallScreen';
 
 export type RootStackParamList = {
   RegisterScreen: undefined;
@@ -34,11 +36,26 @@ export type RootStackParamList = {
     friendID: string;
     friendAvatar: string;
     friendName: string;
+    friendEmail: string;
   };
   ShowImage: {
     uriImage: string;
     width: number;
     height: number;
+  };
+  Calling: {
+    user?: {
+      name: string;
+      displayname: string;
+      avatar: string;
+    };
+    call?: any;
+    isIncomingCall?: Boolean;
+    sendVideo?: Boolean;
+  };
+  IncomingCall: {
+    call: any;
+    sendVideo: Boolean;
   };
 };
 
@@ -80,6 +97,20 @@ export default function Navigator() {
           <Stack.Screen
             name={'ShowImage'}
             component={ShowImagePostScreen}
+            options={{
+              presentation: 'transparentModal',
+            }}
+          />
+          <Stack.Screen
+            name={'Calling'}
+            component={CallingScreen}
+            options={{
+              presentation: 'transparentModal',
+            }}
+          />
+          <Stack.Screen
+            name={'IncomingCall'}
+            component={IncomingCallScreen}
             options={{
               presentation: 'transparentModal',
             }}

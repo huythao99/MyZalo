@@ -104,6 +104,7 @@ export default function ProfileScreen(props: ProfileProps) {
   const dispatch = useAppDispatch();
   const listPost = useAppSelector(state => state.profile.listPost);
   const userAvatar = useAppSelector(state => state.profile.profileAvatar);
+  const userEmail = useAppSelector(state => state.profile.profileEmail);
   const coverImage = useAppSelector(state => state.profile.profileCoverImage);
   const userName = useAppSelector(state => state.profile.profileName);
   const userID = useAppSelector(state => state.auth.uid);
@@ -161,6 +162,7 @@ export default function ProfileScreen(props: ProfileProps) {
         friendAvatar: userAvatar,
         friendName: userName,
         friendID: props.route.params.uid,
+        friendEmail: userEmail,
       });
     }
   };

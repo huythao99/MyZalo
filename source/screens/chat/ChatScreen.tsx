@@ -34,6 +34,7 @@ interface ChatProps {
       friendID: string;
       friendAvatar: string;
       friendName: string;
+      friendEmail?: string;
     };
   };
 }
@@ -126,6 +127,7 @@ export default function ChatScreen(props: ChatProps) {
   const userID = useAppSelector(state => state.auth.uid);
   const userAvatar = useAppSelector(state => state.auth.photoURL);
   const userName = useAppSelector(state => state.auth.username);
+  const userEmail = useAppSelector(state => state.auth.email);
   const dispatch = useAppDispatch();
   const {control, handleSubmit, resetField} = useForm<FormValues>();
   const [listMessage, setListMessage] = React.useState([]);
@@ -137,11 +139,31 @@ export default function ChatScreen(props: ChatProps) {
   };
 
   const onCall = () => {
-    showAlert('Chức năng đang phát triển', 'info');
+    navigation.navigate('Calling', {
+      user: {
+        name: props.route.params.friendEmail.substring(
+          0,
+          props.route.params.friendEmail.lastIndexOf('@'),
+        ),
+        avatar: props.route.params.friendAvatar,
+        displayname: props.route.params.friendName,
+      },
+      sendVideo: false,
+    });
   };
 
   const onVideoCall = () => {
-    showAlert('Chức năng đang phát triển', 'info');
+    navigation.navigate('Calling', {
+      user: {
+        name: props.route.params.friendEmail.substring(
+          0,
+          props.route.params.friendEmail.lastIndexOf('@'),
+        ),
+        avatar: props.route.params.friendAvatar,
+        displayname: props.route.params.friendName,
+      },
+      sendVideo: true,
+    });
   };
 
   const onShowProfile = () => {
@@ -198,11 +220,13 @@ export default function ChatScreen(props: ChatProps) {
           id: userID,
           avatar: userAvatar,
           name: userName,
+          email: userEmail,
         },
         receiver: {
           id: props.route.params.friendID,
           name: props.route.params.friendName,
           avatar: props.route.params.friendAvatar,
+          email: props.route.params.friendEmail,
         },
       }),
     );
@@ -218,11 +242,13 @@ export default function ChatScreen(props: ChatProps) {
           id: userID,
           avatar: userAvatar,
           name: userName,
+          email: userEmail,
         },
         receiver: {
           id: props.route.params.friendID,
           name: props.route.params.friendName,
           avatar: props.route.params.friendAvatar,
+          email: props.route.params.friendEmail,
         },
       }),
     );

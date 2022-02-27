@@ -6,6 +6,7 @@ import {showAlert} from '../../ultities/Ultities';
 import firestore from '@react-native-firebase/firestore';
 import {User} from '../../constants/Types';
 import storage from '@react-native-firebase/storage';
+import {signinVox, signupVox} from '../../apis/AuthAPI';
 
 // Define a type for the slice state
 interface AuthState {
@@ -70,6 +71,11 @@ export const createUser = createAsyncThunk(
         coverImage: coverImage,
       };
       await firestore().collection('Users').doc(result.uid).set(result);
+      await signupVox({
+        username: email.substring(0, email.lastIndexOf('@')),
+        displayname: username,
+        password: password,
+      });
       await AsyncStorageLib.setItem('user', JSON.stringify(result));
       showAlert('Tạo tài khoản thành công', 'success');
       return new Promise(resolve => {
@@ -116,6 +122,10 @@ export const requestLogin = createAsyncThunk(
         photoURL: userInfo.photoURL,
         coverImage: userData.data().coverImage,
       };
+      await signinVox({
+        username: userEmail.substring(0, userEmail.lastIndexOf('@')),
+        password: userPassword,
+      });
       await AsyncStorageLib.setItem('user', JSON.stringify(result));
       showAlert('Chào mừng bạn đến với MyZalo', 'success');
       return new Promise(resolve => {
@@ -141,10 +151,17 @@ export const requestAutoLogin = createAsyncThunk(
     try {
       const user = await AsyncStorageLib.getItem('user');
       const userInfo = JSON.parse(user);
-      const res = await auth().signInWithEmailAndPassword(
+      await auth().signInWithEmailAndPassword(
         userInfo.userEmail,
         userInfo.userPassword,
       );
+      await signinVox({
+        username: userInfo.userEmail.substring(
+          0,
+          userInfo.userEmail.lastIndexOf('@'),
+        ),
+        password: userInfo.password,
+      });
       showAlert('Chào mừng bạn đến với MyZalo', 'success');
       return new Promise(resolve => {
         resolve({

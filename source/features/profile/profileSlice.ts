@@ -10,6 +10,7 @@ interface ProfileState {
   profileCoverImage: string;
   profileName: string;
   isLoading: Boolean;
+  profileEmail: string;
 }
 
 interface PostItem {
@@ -47,6 +48,7 @@ export const requestGetDataUser = createAsyncThunk(
           profileAvatar: userData.data().photoURL,
           profileCoverImage: userData.data().coverImage,
           profileName: userData.data().username,
+          profileEmail: userData.data().userEmail,
         });
       });
     } catch (error) {
@@ -66,6 +68,7 @@ const initialState: ProfileState = {
   profileAvatar: '',
   profileCoverImage: '',
   profileName: '',
+  profileEmail: '',
   isLoading: false,
 };
 
@@ -85,6 +88,7 @@ export const profileSlice = createSlice({
         state.profileAvatar = action.payload.profileAvatar;
         state.profileCoverImage = action.payload.profileCoverImage;
         state.profileName = action.payload.profileName;
+        state.profileEmail = action.payload.profileEmail;
       }
     });
     builder.addCase(requestGetDataUser.rejected, state => {

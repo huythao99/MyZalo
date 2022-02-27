@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^1.7.1",
     "@types/react-native": "^0.66.15",
     "@types/styled-components": "^5.1.21",
+    "axios": "^0.26.0",
     "lottie-react-native": "^5.0.1",
     "react": "17.0.2",
     "react-hook-form": "^7.25.0",
@@ -36,6 +37,7 @@
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.10.2",
     "react-native-vector-icons": "^9.0.0",
+    "react-native-voximplant": "^1.28.0",
     "react-redux": "^7.2.6",
     "styled-components": "^5.3.3"
   },

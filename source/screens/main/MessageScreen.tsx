@@ -18,6 +18,10 @@ import {RootStackParamList} from '../../navigator';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 
+import {Voximplant} from 'react-native-voximplant';
+
+const voximplant = Voximplant.getInstance();
+
 type FormValues = {
   search: string;
 };
@@ -76,11 +80,13 @@ export default function MessageScreen() {
     friendID: string,
     friendAvatar: string,
     friendName: string,
+    friendEmail: string,
   ) => {
     navigation.navigate('Chat', {
       friendID,
       friendAvatar,
       friendName,
+      friendEmail,
     });
   };
 
@@ -111,6 +117,19 @@ export default function MessageScreen() {
     return () => unsubcribe();
   }, []);
 
+  React.useEffect(() => {
+    voximplant.on(Voximplant.ClientEvents.IncomingCall, incomingCallEvent => {
+      navigation.navigate('IncomingCall', {
+        call: incomingCallEvent.call,
+        sendVideo: incomingCallEvent.video,
+      });
+    });
+
+    return () => {
+      voximplant.off(Voximplant.ClientEvents.IncomingCall);
+    };
+  }, []);
+
   return (
     <Container>
       <Controller
@@ -124,7 +143,7 @@ export default function MessageScreen() {
                 placeholder={'Tìm kiếm'}
                 onChangeText={onChange}
               />
-              <SearchButton onPress={onSubmit}>
+              <SearchButton>
                 <FontAwesome5
                   name={'search'}
                   size={(WIDHTH_WINDOW / 100) * 5}

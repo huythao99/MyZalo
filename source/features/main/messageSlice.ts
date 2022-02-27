@@ -37,11 +37,13 @@ export const requestSendMessage = createAsyncThunk(
       id: string;
       name: string;
       avatar: string;
+      email: string;
     };
     receiver: {
       id: string;
       name: string;
       avatar: string;
+      email: string;
     };
   }): Promise<Partial<Message>> => {
     try {
@@ -100,11 +102,13 @@ export const requestUpdateConversation = createAsyncThunk(
       id: string;
       name: string;
       avatar: string;
+      email: string;
     };
     receiver: {
       id: string;
       name: string;
       avatar: string;
+      email: string;
     };
   }): Promise<Partial<Message>> => {
     try {

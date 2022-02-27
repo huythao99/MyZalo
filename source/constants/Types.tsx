@@ -54,6 +54,7 @@ export interface Profile {
   profileAvatar: string;
   profileCoverImage: string;
   profileName: string;
+  profileEmail: string;
 }
 
 interface PostItem {

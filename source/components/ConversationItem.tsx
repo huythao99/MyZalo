@@ -13,6 +13,7 @@ interface ConversationItemProps {
     friendID: string,
     friendAvatar: string,
     friendName: string,
+    friendEmail: string,
   ) => void;
 }
 
@@ -70,6 +71,9 @@ function ConversationItem(props: ConversationItemProps) {
           props.uid === props.item.sender.id
             ? props.item.receiver.name
             : props.item.sender.name,
+          props.uid === props.item.sender.id
+            ? props.item.receiver.email
+            : props.item.sender.email,
         )
       }>
       <LeftContainer>

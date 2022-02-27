@@ -66,6 +66,14 @@ export const TypePermission = {
     ios: 'Contacts',
     android: 'READ_CONTACTS',
   },
+  micro: {
+    ios: 'Microphone',
+    android: 'RECORD_AUDIO',
+  },
+  camera: {
+    ios: 'Camera',
+    android: 'CAMERA',
+  },
 };
 
 export const requestPermission = async (type: string) => {
@@ -78,7 +86,7 @@ export const requestPermission = async (type: string) => {
       break;
     case RESULTS.DENIED:
       showAlert(
-        'Quyền truy cập danh bạ đã bị từ chối, hãy vào cài đặt để cấp cho ứng dụng quyền truy cập danh bạ',
+        'Quyền truy cập đã bị từ chối, hãy vào cài đặt để cấp cho ứng dụng quyền truy cập',
         'warning',
       );
       break;
