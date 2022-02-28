@@ -8,7 +8,19 @@ import {useNavigation} from '@react-navigation/native';
 import {Voximplant} from 'react-native-voximplant';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../../navigator';
-import {TRANSPARENT} from '../../../constants/COLOR';
+import {
+  BLACK,
+  GREEN_500,
+  RED_A400,
+  TRANSPARENT,
+  WHITE,
+} from '../../../constants/COLOR';
+import styled from 'styled-components/native';
+import {
+  HEIGHT_WINDOW,
+  normalize,
+  WIDHTH_WINDOW,
+} from '../../../constants/Dimensions';
 
 interface IncomingCallProps {
   route: {
@@ -23,6 +35,61 @@ type IncomingCallScreenProps = StackNavigationProp<
   RootStackParamList,
   'Calling'
 >;
+
+type ButtonProps = {
+  color: string;
+};
+
+const Container = styled.View`
+  background-color: ${BLACK};
+  flex: 1;
+  align-items: center;
+  padding-horizontal: ${(WIDHTH_WINDOW / 100) * 5}px;
+  padding-vertical: ${(HEIGHT_WINDOW / 100) * 5}px;
+`;
+
+const NameText = styled.Text`
+  font-size: ${normalize(30)}px;
+  font-weight: 700;
+  color: ${WHITE};
+  margin-top: ${(HEIGHT_WINDOW / 100) * 12}px;
+  margin-bottom: ${(HEIGHT_WINDOW / 100) * 3}px;
+`;
+
+const PhoneText = styled.Text`
+  font-size: ${normalize(20)}px;
+  color: ${WHITE};
+`;
+
+const RowContainer = styled.View`
+  width: ${WIDHTH_WINDOW}px;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
+const IconContainer = styled.View`
+  align-items: center;
+  margin-vertical: ${(HEIGHT_WINDOW / 100) * 2.5}px;
+`;
+
+const IconText = styled.View`
+  color: ${WHITE};
+  margin-top: ${HEIGHT_WINDOW / 100}px;
+`;
+
+const ButtonContainer = styled.TouchableOpacity`
+  width: ${WIDHTH_WINDOW}px;
+  flex-direction: row;
+  justify-content: space-around;
+`;
+
+const IconButtonContainer = styled.View`
+background-color: ${(props: ButtonProps) => props.color},
+width: ${(WIDHTH_WINDOW / 100) * 15}px;
+height: ${(WIDHTH_WINDOW / 100) * 15}px;
+border-radius: ${(WIDHTH_WINDOW / 100) * 10}px;
+margin: ${(WIDHTH_WINDOW / 100) * 2.5}px;
+`;
 
 const IncomingCallScreen = (props: IncomingCallProps) => {
   const [caller, setCaller] = useState('');
@@ -54,40 +121,51 @@ const IncomingCallScreen = (props: IncomingCallProps) => {
   };
 
   return (
-    <View style={styles.bg}>
-      <Text style={styles.name}>{caller}</Text>
-      <Text style={styles.phoneNumber}>WhatsApp video...</Text>
+    <Container>
+      <NameText>{caller}</NameText>
+      <PhoneText>WhatsApp video...</PhoneText>
 
-      <View style={[styles.row, {marginTop: 'auto'}]}>
-        <View style={styles.iconContainer}>
-          <Ionicons name="alarm" color="white" size={30} />
-          <Text style={styles.iconText}>Remind me</Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Entypo name="message" color="white" size={30} />
-          <Text style={styles.iconText}>Message</Text>
-        </View>
-      </View>
+      <RowContainer>
+        <IconContainer>
+          <Ionicons
+            name="alarm"
+            color={WHITE}
+            size={(WIDHTH_WINDOW / 100) * 7}
+          />
+          <IconText>Remind me</IconText>
+        </IconContainer>
+        <IconContainer>
+          <Entypo
+            name="message"
+            color={WHITE}
+            size={(WIDHTH_WINDOW / 100) * 7}
+          />
+          <IconText>Message</IconText>
+        </IconContainer>
+      </RowContainer>
 
-      <View style={styles.row}>
+      <RowContainer>
         {/* Decline Button */}
-        <Pressable onPress={onDecline} style={styles.iconContainer}>
-          <View style={styles.iconButtonContainer}>
-            <Feather name="x" color="white" size={40} />
-          </View>
-          <Text style={styles.iconText}>Decline</Text>
-        </Pressable>
+        <ButtonContainer onPress={onDecline}>
+          <IconButtonContainer color={RED_A400}>
+            <Feather name="x" color={WHITE} size={(WIDHTH_WINDOW / 100) * 10} />
+          </IconButtonContainer>
+          <IconText>Decline</IconText>
+        </ButtonContainer>
 
         {/* Accept Button */}
-        <Pressable onPress={onAccept} style={styles.iconContainer}>
-          <View
-            style={[styles.iconButtonContainer, {backgroundColor: '#2e7bff'}]}>
-            <Feather name="check" color="white" size={40} />
-          </View>
-          <Text style={styles.iconText}>Accept</Text>
-        </Pressable>
-      </View>
-    </View>
+        <ButtonContainer onPress={onAccept}>
+          <IconButtonContainer color={GREEN_500}>
+            <Feather
+              name="check"
+              color={WHITE}
+              size={(WIDHTH_WINDOW / 100) * 10}
+            />
+          </IconButtonContainer>
+          <IconText>Accept</IconText>
+        </ButtonContainer>
+      </RowContainer>
+    </Container>
   );
 };
 
